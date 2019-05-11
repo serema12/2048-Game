@@ -36,20 +36,21 @@ sfx=game.mixer.Sound("NoSFX.mp3")
 clock=game.time.Clock()
 ##set color
 class Color(Enum):
+    Cream = (255, 235, 205)
     White = (255,255,255)
     DeepOrange = (234,120,33)
     Block0 = (204, 192, 179)
     Block2 = (238, 228, 218)
-    Block4 = (237, 224, 200)
-    Block8 = (242, 177, 121)
-    Block16 = (244, 149, 99)
-    Block32 = (245, 121, 77)
-    Block64 = (245, 93, 55)
-    Block128 = (238, 232, 99)
-    Block256 = (237, 176, 77)
-    Block512 = (236, 176, 77)
-    Block1024 = (235, 148, 55)
-    Block2048 = (234, 120, 33)
+    Block4 = (255, 218, 195)
+    Block8 = (231, 176, 142)
+    Block16 = (231, 191, 142)
+    Block32 = (255, 196, 195)
+    Block64 = (231, 148, 142)
+    Block128 = (183, 94, 132)
+    Block256 = (190, 94, 86)
+    Block512 = (156, 57, 49)
+    Block1024 = (112, 23, 16)
+    Block2048 = (86, 46, 95)
     TextLight = (255, 244, 234)
     TextDark = (119, 110, 101)
     Inactive_Color = (255,255,255)
@@ -225,10 +226,19 @@ def Build_Text(board,y,x):
        text=mediumfont.render(board[y][x],True,Color.TextDark.value)
        for i in range(1,12):
            if board[y][x]==SCORE[pow(2,i)]:
+                if (SCORE[pow(2,i)]=='128'):
+                    text=mediumfont.render(board[y][x],True,Color.White.value)
+                elif (SCORE[pow(2,i)]=='256'):
+                    text=mediumfont.render(board[y][x],True,Color.White.value)
+                elif (SCORE[pow(2,i)]=='512'):
+                    text=mediumfont.render(board[y][x],True,Color.White.value)
+                elif (SCORE[pow(2,i)]=='1024'):
+                    text=mediumfont.render(board[y][x],True,Color.White.value)
+                elif (SCORE[pow(2,i)]=='2048'):
+                    text=mediumfont.render(board[y][x],True,Color.White.value)
                
-               game.draw.rect(Gamedisplay,COLOR_SWITCHER[pow(2,i)],
-                              [y*(GAME_WIDTH_END-GAME_WIDTH_START)/4 +GAME_WIDTH_START,x*(GAME_HEIGHT_END-GAME_HEIGHT_START)/4 +GAME_HEIGHT_START,(GAME_HEIGHT_END-GAME_HEIGHT_START)/4,(GAME_HEIGHT_END-GAME_HEIGHT_START)/4])
-               game.draw.rect(Gamedisplay,Color.TextDark.value,[y*(GAME_WIDTH_END-GAME_WIDTH_START)/4 +GAME_WIDTH_START,x*(GAME_HEIGHT_END-GAME_HEIGHT_START)/4 +GAME_HEIGHT_START,80,80],5)
+                game.draw.rect(Gamedisplay,COLOR_SWITCHER[pow(2,i)],[y*(GAME_WIDTH_END-GAME_WIDTH_START)/4 +GAME_WIDTH_START,x*(GAME_HEIGHT_END-GAME_HEIGHT_START)/4 +GAME_HEIGHT_START,(GAME_HEIGHT_END-GAME_HEIGHT_START)/4,(GAME_HEIGHT_END-GAME_HEIGHT_START)/4])
+                game.draw.rect(Gamedisplay,Color.TextDark.value,[y*(GAME_WIDTH_END-GAME_WIDTH_START)/4 +GAME_WIDTH_START,x*(GAME_HEIGHT_END-GAME_HEIGHT_START)/4 +GAME_HEIGHT_START,80,80],5)
     textRect=text.get_rect()
     textRect.centerx=y*(GAME_WIDTH_END-GAME_WIDTH_START)/4 +GAME_WIDTH_START +BLOCK_WIDTH/2
     textRect.centery=x*(GAME_HEIGHT_END-GAME_HEIGHT_START)/4 +GAME_HEIGHT_START +BLOCK_HEIGHT/2
@@ -341,11 +351,13 @@ def Game_Over():
     textRect.centery=200
     Gamedisplay.blit(textGameOver,textRect)
     event = game.event.wait()
-
+#Restart
+def Restar():
+    main()
 #main play 
 def main():
     
-    Gamedisplay.fill(Color.White.value)
+    Gamedisplay.fill(Color.Cream.value)
     
     board = Init_Board()
     
@@ -370,7 +382,7 @@ def main():
                     sfx.play()
         #draw the game board
         Gamedisplay.blit(image,[0,0])
-        game.draw.rect(Gamedisplay,Color.Block2048.value,[GAME_WIDTH_START,GAME_HEIGHT_START,BOARD_THICKNESS,BOARD_THICKNESS])
+        game.draw.rect(Gamedisplay,Color.Block0.value,[GAME_WIDTH_START,GAME_HEIGHT_START,BOARD_THICKNESS,BOARD_THICKNESS])
         Draw_Board(board)
         for y in range (4):
             for x in range(4):
