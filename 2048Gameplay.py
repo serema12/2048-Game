@@ -20,15 +20,16 @@ game.display.set_caption('2048')
 smallfont=game.font.SysFont(None,30)
 mediumfont=game.font.SysFont(None,40)
 largefont=game.font.SysFont(None,130)
-image=game.image.load('20.png')
+image=game.image.load('2048.png')
 icon=game.image.load('2048alpha.png')
 menu=game.image.load('Menu2048.png')
 volume=game.image.load('Volume.png')
 volumeoff=game.image.load('VolumeOff.png')
 volume=game.transform.scale(volume,(50,50))
 volumeoff=game.transform.scale(volumeoff,(50,55))
-image=game.transform.scale(image,(150,150))
+image=game.transform.scale(image,(215,135))
 menu=game.transform.scale(menu,(315,350))
+
 game.display.set_icon(icon)
 game.mixer.init()
 game.mixer.music.load('Music.mp3')
@@ -39,6 +40,7 @@ class Color(Enum):
     Screen = (140, 235, 205)
     Cream = (255,235,205)
     White = (255,255,255)
+    WhiteB = (185,226,247)
     
     DeepOrange = (234,120,33)
     Block0 = (204, 192, 179)
@@ -114,17 +116,31 @@ def Menu():
             
         
         #Mess_To_Screen("2048",Color.White.value,275,20,60,60,size='Large')
-        Button_For_Text("Start Game",430,60,60,60,370,70,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Start Game')
-        Button_For_Text("Feats",430,120,60,60,370,130,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Feats')
-        Button_For_Text("Options",430,180,60,60,370,190,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Options')
-        Button_For_Text("Quits",430,240,60,60,370,250,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Quits')
-      
+        Button_For_Text("Start Game",430,60,60,60,370,70,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Start Game',None)
+        Button_For_Text("Intro",430,120,60,60,370,130,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Intro',None)
+        Button_For_Text("Options",430,180,60,60,370,190,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Options','Active')
+        Button_For_Text("Quit",430,240,60,60,370,250,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Quits',None)
         Gamedisplay.blit(menu,[0,0])
-        
-        
+        game.display.update()
+#Introduction
+def Intro():
+    Gamedisplay.fill(Color.Screen.value)
+    introduction=True
+    while introduction:
+        for event in game.event.get():
+            if event.type==game.QUIT:
+                game.quit()
+                quit()
+        game.draw.rect(Gamedisplay,(0,0,0),[70,50,450,210],5)
+        game.draw.rect(Gamedisplay,Color.Board.value,[70,50,450,210])
+        Mess_To_Screen('- To play the game simply use  ',Color.Inactive_Color.value,150,0,300,150)
+        Mess_To_Screen('up, down, left and right arrows.',Color.Inactive_Color.value,110,0,350,200)
+        Mess_To_Screen('- This game have restart, undo  ',Color.Inactive_Color.value,105,0,400,275)
+        Mess_To_Screen('function as well as score system.',Color.Inactive_Color.value,70,0,450,325)
+        Button_For_Text('Back',285,265,60,60,230,270,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Back',None)
         game.display.update()
 #def button
-def Button_For_Text(text,x_text,y_text,width_text,height_text,x_rec,y_rec,width_rec,height_rec,color_rec,inactive_color,active_color,size,action=None):
+def Button_For_Text(text,x_text,y_text,width_text,height_text,x_rec,y_rec,width_rec,height_rec,color_rec,inactive_color,active_color,size,action=None,default=None):
     Mouse_Pos=game.mouse.get_pos()
     Mouse_Click=game.mouse.get_pressed()
     if x_text+width_text>Mouse_Pos[0]>x_text and y_text+height_text>Mouse_Pos[1]>y_text:
@@ -138,11 +154,20 @@ def Button_For_Text(text,x_text,y_text,width_text,height_text,x_rec,y_rec,width_
             elif action=='Start Game':
                 main()
             elif action=='Options':
-                Option()
+                if default == 'Active':
+                    Option('Menu')
+                else:
+                    Option('Game')
+            elif action=='Intro':
+                Intro()
             elif action=='Back':
                 Menu()
+            elif action=='Back2':
+                return False    
             elif action=='Play Again':
                 main()
+            elif action=='Restart':
+                Restart()
             elif action=='Quit':
                 game.quit()
                 quit()
@@ -167,28 +192,46 @@ def Button_For_Icon(x,y,width,height,action=None):
             elif action=='SFXOff':
                 sfx=game.mixer.Sound('NoSFX.mp3')
 #option
-def Option():
-    Gamedisplay.fill(Color.Screen.value)
+def Option(Case):
+    
     option=True
     while option:
         for event in game.event.get():
             if event.type==game.QUIT:
                 game.quit()
                 quit()
-            
-        game.draw.rect(Gamedisplay,(0,0,0),[120,100,400,175],5)
-        game.draw.rect(Gamedisplay,Color.Board.value,[120,100,400,175])
-        Mess_To_Screen(' Music ',Color.Inactive_Color.value,180,105,60,60)
-        Gamedisplay.blit(volume,[325,105])
-        Gamedisplay.blit(volumeoff,[420,105])
-        Button_For_Icon(325,105,50,50,'Volume')
-        Button_For_Icon(420,105,50,50,'Volume Off')
-        Mess_To_Screen(' SFX   ',Color.Inactive_Color.value,180,185,60,60)
-        Gamedisplay.blit(volume,[325,185])
-        Gamedisplay.blit(volumeoff,[420,185])
-        Button_For_Icon(325,185,50,50,'SFX')
-        Button_For_Icon(420,185,50,50,'SFXOff')
-        Button_For_Text('Back',315,280,60,60,260,290,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Back')
+        if (Case=='Menu'):
+            Gamedisplay.fill(Color.Screen.value)
+            game.draw.rect(Gamedisplay,(0,0,0),[120,100,400,175],5)
+            game.draw.rect(Gamedisplay,Color.Board.value,[120,100,400,175])
+            Mess_To_Screen(' Music ',Color.Inactive_Color.value,180,105,60,60)
+            Gamedisplay.blit(volume,[325,105])
+            Gamedisplay.blit(volumeoff,[420,105])
+            Button_For_Icon(325,105,50,50,'Volume')
+            Button_For_Icon(420,105,50,50,'Volume Off')
+            Mess_To_Screen(' SFX   ',Color.Inactive_Color.value,180,185,60,60)
+            Gamedisplay.blit(volume,[325,185])
+            Gamedisplay.blit(volumeoff,[420,185])
+            Button_For_Icon(325,185,50,50,'SFX')
+            Button_For_Icon(420,185,50,50,'SFXOff')
+            Button_For_Text('Back',315,280,60,60,260,290,170,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Back')
+        elif (Case=='Game'):
+            Gamedisplay.fill(Color.Block8.value)
+            game.draw.rect(Gamedisplay,(0,0,0),[120,100,400,175],5)
+            game.draw.rect(Gamedisplay,Color.Block4.value,[120,100,400,175])
+            Mess_To_Screen(' Music ',Color.White.value,180,105,60,60)
+            Gamedisplay.blit(volume,[325,105])
+            Gamedisplay.blit(volumeoff,[420,105])
+            Button_For_Icon(325,105,50,50,'Volume')
+            Button_For_Icon(420,105,50,50,'Volume Off')
+            Mess_To_Screen(' SFX   ',Color.White.value,180,185,60,60)
+            Gamedisplay.blit(volume,[325,185])
+            Gamedisplay.blit(volumeoff,[420,185])
+            Button_For_Icon(325,185,50,50,'SFX')
+            Button_For_Icon(420,185,50,50,'SFXOff')
+            regis=Button_For_Text('Back',315,280,60,60,260,290,170,40,Color.Block4.value,Color.Inactive_Color.value,Color.Active_Color.value,'Medium','Back2')
+            if regis == False:
+                option=False
         game.display.update()
 
 #Random block     
@@ -301,6 +344,22 @@ def Score(board):
         for x in range (4):
              Sum+=(int)(board[y][x])
     return Sum
+def High_Score(score):
+    h=open('highscore.txt','r')
+    highscore=h.read()
+    print highscore
+    if (int)(highscore)<(int)(score):
+        h1=open('highscore.txt','w')
+        h1.write(score)
+        h1.close()
+        h.close()
+        
+        return score
+    else:
+        h.close()
+        return highscore
+
+    h.close()
 #check each block if they can move 
 def Check_Cell(board,y,x):
     move_y=[]
@@ -347,17 +406,18 @@ def Game_Loop(board,user_input):
         
     return board
 #text when win
-def Win(score):
-    Gamedisplay.fill(Color.Cream.value)
+def Win(score,highscore):
+    Gamedisplay.fill(Color.Screen.value)
     Over= True
     while Over :
         Mess_To_Screen("Score",Color.Board.value,200,2,60,60,size='Medium')
         Mess_To_Screen(str(score),Color.TextDark.value,200,30,60,60,size='Medium')
         Mess_To_Screen("Highest",Color.Board.value,400,2,60,60,size='Medium')
-        Mess_To_Screen(str(score),Color.TextDark.value,400,30,60,60,size='Medium')
+        Mess_To_Screen(str(highscore),Color.TextDark.value,400,30,60,60,size='Medium')
         Mess_To_Screen("YOU WIN !",Color.Yellow.value,300,130,60,60,size='Large')
-        Button_For_Text("Play Again",170,230,60,60,110,240,180,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,"Medium","Play Again")
-        Button_For_Text("Quit",420,230,60,60,360,240,180,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,"Medium","Quit")    
+        Button_For_Text("Play Again",170,210,60,60,110,220,180,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,"Medium","Play Again",None)
+        Button_For_Text("Quit",420,210,60,60,360,220,180,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,"Medium","Quit",None)
+        Button_For_Text("Menu",300,280,60,60,240,290,180,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,"Medium","Menu",None)
         for event in game.event.get():
             if event.type==game.QUIT:
                 game.quit()
@@ -365,19 +425,19 @@ def Win(score):
         game.display.update()   
     event = game.event.wait()
 #text when game over
-def Game_Over(score):
-    Gamedisplay.fill(Color.Cream.value)
+def Game_Over(score,highscore):
+    Gamedisplay.fill(Color.Screen.value)
     Over= True
     while Over :
                        
         Mess_To_Screen("Score",Color.Board.value,200,2,60,60,size='Medium')
         Mess_To_Screen(str(score),Color.TextDark.value,200,30,60,60,size='Medium')
         Mess_To_Screen("Highest",Color.Board.value,400,2,60,60,size='Medium')
-        Mess_To_Screen(str(score),Color.TextDark.value,400,30,60,60,size='Medium')
+        Mess_To_Screen(str(highscore),Color.TextDark.value,400,30,60,60,size='Medium')
         Mess_To_Screen("GAME OVER!",Color.Yellow.value,300,130,60,60,size='Large')
-        Button_For_Text("Play Again",170,230,60,60,110,240,180,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,"Medium","Play Again")
-        Button_For_Text("Quit",420,230,60,60,360,240,180,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,"Medium","Quit")
-        
+        Button_For_Text("Play Again",170,210,60,60,110,220,180,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,"Medium","Play Again",None)
+        Button_For_Text("Quit",420,210,60,60,360,220,180,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,"Medium","Quit",None)
+        Button_For_Text("Menu",300,280,60,60,240,290,180,40,Color.Board.value,Color.Inactive_Color.value,Color.Active_Color.value,"Medium","Menu",None)
         for event in game.event.get():
             if event.type==game.QUIT:
                 game.quit()
@@ -390,12 +450,10 @@ def Restart():
 #main play 
 def main():
     
-    Gamedisplay.fill(Color.Cream.value)
-    
     board = Init_Board()
     
     while True:
-        
+        Gamedisplay.fill(Color.Block8.value)
         for event in game.event.get():
             if event.type==game.QUIT:
                 game.quit()
@@ -415,7 +473,9 @@ def main():
                     sfx.play()
         #draw the game board
         Sum=Score(board)
-        
+        HighScore=High_Score((str)(Sum))
+        game.draw.rect(Gamedisplay,Color.Block4.value,[45,170,215,140])
+        Gamedisplay.blit(image,[45,20])
         game.draw.rect(Gamedisplay,Color.Block0.value,[GAME_WIDTH_START,GAME_HEIGHT_START,BOARD_THICKNESS,BOARD_THICKNESS])
         Draw_Board(board)
         for y in range (4):
@@ -423,11 +483,28 @@ def main():
                 game.draw.rect(Gamedisplay,Color.TextDark.value,[y*(GAME_WIDTH_END-GAME_WIDTH_START)/4 +GAME_WIDTH_START,x*(GAME_HEIGHT_END-GAME_HEIGHT_START)/4 +GAME_HEIGHT_START,BLOCK_WIDTH,BLOCK_HEIGHT],5)
         Draw_Board(board)
         if Check_Lose(board):
-            Game_Over()
+            Game_Over(Sum,HighScore)
         if Check_Win(board):
-            Win()
+            Win(Sum,HighScore)
+        game.draw.rect(Gamedisplay,Color.TextDark.value,[45,170,215,145],5)
+        
+        game.draw.rect(Gamedisplay,Color.Block128.value,[60,180,75,65])
+        Mess_To_Screen("Score",Color.WhiteB.value,65,170,65,60,size='Small')
+        Mess_To_Screen(str(Sum),Color.TextLight.value,65,195,65,60,size='Small')
+        game.draw.rect(Gamedisplay,Color.TextDark.value,[60,180,75,65],2)
+        
+        game.draw.rect(Gamedisplay,Color.Block128.value,[155,180,90,65])
+        Mess_To_Screen("Highest",Color.WhiteB.value,170,170,60,60,size='Small')
+        Mess_To_Screen(str(Sum),Color.TextLight.value,170,195,60,60,size='Small')
+        game.draw.rect(Gamedisplay,Color.TextDark.value,[155,180,90,65],2)
+
+        Button_For_Text('Restart',88,250,20,60,60,260,75,40,Color.Block128.value,Color.Inactive_Color.value,Color.Active_Color.value,'Small','Restart',None)
+
+        Button_For_Text('Options',190,250,20,60,155,260,90,40,Color.Block128.value,Color.Inactive_Color.value,Color.Active_Color.value,'Small','Options','Game')
+       
         game.display.update()
    
 if __name__ == '__main__':
+    
     Menu()
-    main()
+    
