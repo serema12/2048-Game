@@ -347,7 +347,6 @@ def Score(board):
 def High_Score(score):
     h=open('highscore.txt','r')
     highscore=h.read()
-    print highscore
     if (int)(highscore)<(int)(score):
         h1=open('highscore.txt','w')
         h1.write(score)
@@ -359,7 +358,7 @@ def High_Score(score):
         h.close()
         return highscore
 
-    h.close()
+    
 #check each block if they can move 
 def Check_Cell(board,y,x):
     move_y=[]
@@ -405,6 +404,15 @@ def Game_Loop(board,user_input):
             Create_Block(board,1)
         
     return board
+#def undo
+def Undo (board,boardr):
+        
+        
+        for y in range (4):
+            for x in range(4):
+                board[y][x]=boardr[y][x]
+        Draw_Board(board)
+        
 #text when win
 def Win(score,highscore):
     Gamedisplay.fill(Color.Screen.value)
@@ -451,7 +459,9 @@ def Restart():
 def main():
     
     board = Init_Board()
-    
+    #undo
+    boardr=Init_Board()
+    undo = 0 
     while True:
         Gamedisplay.fill(Color.Block8.value)
         for event in game.event.get():
@@ -459,9 +469,16 @@ def main():
                 game.quit()
                 quit()
             if event.type == game.KEYDOWN:
+                if event.key == game.K_u and undo == 0:
+                    Undo(board,boardr)
+                    undo+=1
+                for y in range (4):
+                        for x in range (4):
+                            boardr[y][x]= board[y][x]
                 if event.key == game.K_DOWN:
                     board=Game_Loop(board,"d")
                     sfx.play()
+                    
                 if event.key == game.K_UP:
                     board=Game_Loop(board,"u")
                     sfx.play()
@@ -471,6 +488,10 @@ def main():
                 if event.key == game.K_RIGHT:
                     board=Game_Loop(board,"r")
                     sfx.play()
+                
+
+        #undo
+        
         #draw the game board
         Sum=Score(board)
         HighScore=High_Score((str)(Sum))
