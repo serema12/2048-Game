@@ -13,3 +13,4 @@ Undo : Lâm
 Game Over and Win : An 
 Highest Score :An
 Restart : Bảo 
+Khanh : Cấu trúc Game 
