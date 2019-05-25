@@ -1,5 +1,5 @@
 # 2048-Game
-Game 2048 :
+Game 2048 :	
 Use up to move up,down to move down ,left to move left and right to move right
 Special features :
 U : undo
